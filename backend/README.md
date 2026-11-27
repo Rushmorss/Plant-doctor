@@ -87,3 +87,8 @@ Import file `Auth_API.postman_collection.json` vào Postman để thử (token �
 - Dùng HTTPS; đặt `FLASK_ENV=production` (app sẽ từ chối khởi động nếu thiếu secret ≥ 32 ký tự hoặc SMTP).
 - Đổi `RATELIMIT_STORAGE_URI` sang Redis (`redis://host:6379/0`) khi chạy nhiều worker; nếu đứng sau reverse proxy cần cấu hình `ProxyFix` để lấy đúng IP client.
 - Gửi email hiện chạy ở thread nền; hệ thống lớn nên chuyển sang hàng đợi (Celery/RQ).
+
+### Deploy Backend riêng trên Vercel
+- Đặt **Root Directory** của Vercel là `backend`.
+- `pyproject.toml` khai báo entrypoint Flask là `run:app`; Vercel cài dependencies từ `requirements.txt`.
+- Khai báo các biến môi trường production theo `.env.example` trong Vercel Project Settings rồi deploy lại.
