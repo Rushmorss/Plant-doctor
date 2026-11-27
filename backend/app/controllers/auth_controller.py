@@ -1,7 +1,5 @@
-"""Controller: nhận request, validate, gọi Service, định dạng response."""
 from flask import g
 from flask_jwt_extended import get_jwt_identity
-
 from app.schemas.auth_schema import (
     ForgotPasswordSchema,
     LoginSchema,
@@ -15,7 +13,6 @@ from app.utils.response import success_response
 from app.utils.validators import load_json
 
 _user_schema = UserSchema()
-
 
 class AuthController:
     @staticmethod
@@ -46,7 +43,6 @@ class AuthController:
     def forgot_password():
         data = load_json(ForgotPasswordSchema())
         AuthService.forgot_password(data["email"])
-        # Luôn trả cùng một thông báo để không lộ email có tồn tại hay không
         return success_response(
             message="Nếu email tồn tại trong hệ thống, mã OTP đã được gửi. "
             "Mã có hiệu lực trong 5 phút."

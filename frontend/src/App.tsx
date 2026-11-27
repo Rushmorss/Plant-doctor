@@ -27,10 +27,8 @@ interface AppProps {
 }
 
 export function App({ scanOutcome = 'confident', emptyHistory = false, apiFailure = false }: AppProps) {
-  // Kịch bản mock chỉ dùng khi chưa có Backend (xem services/config.ts).
   setMockScenario({ scanOutcome, emptyHistory, apiFailure });
   const scenarioKey = `${scanOutcome}-${emptyHistory}-${apiFailure}`;
-
   return (
     <AuthProvider>
       <BrowserRouter>
@@ -48,7 +46,6 @@ export function App({ scanOutcome = 'confident', emptyHistory = false, apiFailur
                 <AppShell />
               </RequireAuth>
             }>
-            
             <Route index element={<Dashboard />} />
             <Route path="scan" element={<Scanner />} />
             <Route path="result/:id" element={<DiagnosisResult />} />
@@ -65,7 +62,6 @@ export function App({ scanOutcome = 'confident', emptyHistory = false, apiFailur
           position="top-center"
           offset="max(16px, env(safe-area-inset-top))"
           toastOptions={{ style: { fontFamily: 'Be Vietnam Pro, sans-serif', borderRadius: 14 } }} />
-        
       </BrowserRouter>
     </AuthProvider>);
 

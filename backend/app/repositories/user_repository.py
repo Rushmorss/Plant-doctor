@@ -1,8 +1,3 @@
-"""Tầng truy cập dữ liệu (Repository). Chỉ làm việc với DB, không chứa nghiệp vụ.
-
-Các hàm ghi dữ liệu KHÔNG commit; Service quyết định commit/rollback để gom nhiều
-thao tác vào một transaction.
-"""
 from datetime import datetime
 from typing import Optional
 

@@ -1,4 +1,3 @@
-"""JWT callbacks và decorator bảo vệ route."""
 from functools import wraps
 
 from flask import g

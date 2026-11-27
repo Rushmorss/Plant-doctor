@@ -1,24 +1,16 @@
-"""Khai báo endpoint /api/auth/* và rate limit theo IP."""
 from flask import Blueprint, current_app
 from flask_jwt_extended import jwt_required
-
 from app.controllers.auth_controller import AuthController
 from app.extensions import limiter
 from app.middleware.auth_middleware import login_required
-
 auth_bp = Blueprint("auth", __name__, url_prefix="/api/auth")
 
-
 def _limit(config_key: str):
-    """Đọc mức giới hạn từ config tại thời điểm request."""
     return limiter.limit(lambda: current_app.config[config_key])
-
-
 @auth_bp.post("/register")
 @_limit("RATELIMIT_REGISTER")
 def register():
     return AuthController.register()
-
 
 @auth_bp.post("/login")
 @_limit("RATELIMIT_LOGIN")

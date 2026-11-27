@@ -9,3 +9,4 @@
 # git push -u origin development // lần cập nhật sau chỉ cần // git push origin development
 # git checkout main // Chuyển về lại nhánh main // Git pull origin main ( Cập nhập code mới nhất)
 # git merge development ( Hợp nhất code từ development vào main) // Git push origin main ( Đẩy code lên nhánh main)
+# run // Back End : Python run.py 

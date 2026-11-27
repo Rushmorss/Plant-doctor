@@ -1,8 +1,3 @@
-"""Marshmallow schema: validate request và serialize response.
-
-Mọi schema dùng unknown=EXCLUDE: field lạ (vd. "role": "admin") bị bỏ qua hoàn toàn,
-nên không thể leo thang quyền qua dữ liệu đăng ký công khai.
-"""
 from flask import current_app
 from marshmallow import EXCLUDE, ValidationError, fields, pre_load, validates_schema
 

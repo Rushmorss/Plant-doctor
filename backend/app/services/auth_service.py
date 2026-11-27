@@ -79,14 +79,13 @@ class AuthService:
         logger.info("Đăng ký tài khoản mới user_id=%s", user.id)
         return user
 
-    # --------------------------------------------------------------------- LOGIN
     @staticmethod
     def login(email: str, password: str) -> dict:
         cfg = current_app.config
         user = UserRepository.get_by_email(email)
 
         if user is None:
-            _verify_password(_DUMMY_HASH, password)  # cân bằng thời gian xử lý
+            _verify_password(_DUMMY_HASH, password)  
             raise AppError(INVALID_CREDENTIALS, 401)
 
         now = utcnow()
@@ -107,7 +106,6 @@ class AuthService:
         if not user.is_active:
             raise AppError("Tài khoản đã bị vô hiệu hoá", 403)
 
-        # Thành công: reset bộ đếm, nâng cấp hash nếu tham số Argon2 đã thay đổi
         user.failed_login_attempts = 0
         user.locked_until = None
         if _hasher.check_needs_rehash(user.password_hash):
@@ -118,7 +116,6 @@ class AuthService:
 
     @staticmethod
     def _issue_tokens(user: User) -> dict:
-        # "tv" (token version) cho phép thu hồi toàn bộ phiên cũ khi đổi mật khẩu
         claims = {"tv": user.token_version, "role": user.role}
         return {
             "access_token": create_access_token(identity=str(user.id), additional_claims=claims),
@@ -139,19 +136,12 @@ class AuthService:
             "expires_in": int(current_app.config["JWT_ACCESS_TOKEN_EXPIRES"].total_seconds()),
         }
 
-    # ------------------------------------------------------------ FORGOT PASSWORD
     @staticmethod
     def forgot_password(email: str) -> None:
-        """Bước 1: tạo & gửi OTP. Không báo lỗi dù email có tồn tại hay không.
-
-        Các giới hạn (cooldown, tối đa N OTP/giờ) được áp lặng lẽ để không lộ sự tồn tại
-        của tài khoản; chống spam theo IP do Flask-Limiter đảm nhiệm ở tầng route.
-        """
         cfg = current_app.config
         user = UserRepository.get_by_email(email)
         if user is None or not user.is_active:
             return
-
         now = utcnow()
         latest = OTPRepo.get_latest(user.id)
         if latest and (now - latest.created_at).total_seconds() < cfg["OTP_RESEND_COOLDOWN_SECONDS"]:
@@ -163,7 +153,7 @@ class AuthService:
 
         otp = generate_otp()
         try:
-            OTPRepo.invalidate_all(user.id)  # chỉ OTP mới nhất có hiệu lực
+            OTPRepo.invalidate_all(user.id) 
             OTPRepo.create(
                 user_id=user.id,
                 otp_hash=hash_otp(otp, user.id),
@@ -178,10 +168,6 @@ class AuthService:
 
     @staticmethod
     def verify_otp(email: str, otp: str) -> dict:
-        """Bước 2: kiểm tra OTP, nếu đúng cấp reset token ngắn hạn.
-
-        Mọi lỗi đều trả cùng một thông báo để không lộ thông tin tài khoản.
-        """
         cfg = current_app.config
         user = UserRepository.get_by_email(email)
         if user is None or not user.is_active:
@@ -200,14 +186,14 @@ class AuthService:
         if not verify_otp_hash(otp, user.id, record.otp_hash):
             record.attempts += 1
             if record.attempts >= cfg["OTP_MAX_ATTEMPTS"]:
-                record.is_used = True  # hết lượt thử -> buộc yêu cầu OTP mới
+                record.is_used = True  
             UserRepository.commit()
             raise AppError(INVALID_OTP, 400)
 
         raw_token, token_hash = generate_reset_token()
         ttl = cfg["RESET_TOKEN_EXPIRES_MINUTES"]
         try:
-            record.is_used = True  # OTP chỉ dùng một lần
+            record.is_used = True 
             TokenRepo.invalidate_all(user.id)
             TokenRepo.create(user.id, token_hash, now + timedelta(minutes=ttl))
             UserRepository.commit()
@@ -230,7 +216,7 @@ class AuthService:
 
         try:
             user.password_hash = _hasher.hash(new_password)
-            user.token_version += 1  # thu hồi toàn bộ access/refresh token cũ
+            user.token_version += 1 
             user.failed_login_attempts = 0
             user.locked_until = None
             token.is_used = True

@@ -1,4 +1,3 @@
-"""Chuyển mọi lỗi thành JSON theo chuẩn {success, message, errors}."""
 import logging
 
 from flask import current_app

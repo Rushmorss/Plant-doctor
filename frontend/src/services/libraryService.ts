@@ -3,7 +3,6 @@ import { diseases } from '../data/diseases';
 import type { Crop, Disease } from '../types/plant';
 import { mockRequest } from './mockScenario';
 
-/** Thư viện bệnh cây. CHỜ BACKEND: đang đọc từ dữ liệu tĩnh trong data/. */
 export const libraryService = {
   listCrops(signal?: AbortSignal): Promise<Crop[]> {
     return mockRequest(() => crops, 300, signal);
